@@ -41,14 +41,14 @@ void countingSort(int arr[], int n, int exp) {
     for (int i = 1; i < 10; i++)
         conteo[i] += conteo[i - 1];
 
-    // Construir el arreglo de salida de forma estable[cite: 7]
+    // Construir el arreglo de salida de forma estable
     for (int i = n - 1; i >= 0; i--) {
         int idx = (arr[i] / exp) % 10;
         salida[conteo[idx] - 1] = arr[i];
         conteo[idx]--;
     }
 
-    // Copiar al arreglo original[cite: 7]
+    // Copiar al arreglo original
     for (int i = 0; i < n; i++)
         arr[i] = salida[i];
 
@@ -57,7 +57,7 @@ void countingSort(int arr[], int n, int exp) {
 
 void radixSort(int arr[], int n) {
     int m = obtenerMaximo(arr, n);
-    // Aplicar counting sort para cada posición decimal: 1, 10, 100...[cite: 7]
+    // Aplicar counting sort para cada posición decimal: 1, 10, 100...
     for (int exp = 1; m / exp > 0; exp *= 10)
         countingSort(arr, n, exp);
 }
