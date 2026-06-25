@@ -1,6 +1,3 @@
-// Autores: Edna Martha Miranda Chávez / Sergio Fuenlabrada Velázquez
-// Descripción: Programa en C++ para ordenar un archivo de enteros usando el método IntroSort
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -8,18 +5,15 @@
 #include <algorithm>
 #include <locale>
 #include <chrono>
-#include <limits>
-
 using namespace std;
 
 // Variables globales
 int* arreglo = nullptr;
 int tam = 0;
-int opcionsal = 0;
+int opcionsal=0;
 bool archivoLeido = false;
 bool archivoOrdenado = false;
 bool archivoGrabado = false;
-
 // Flags de activación de algoritmos para mostrar mensajes una sola vez
 bool mensajeHeapsort = false;
 bool mensajeInsertionsort = false;
@@ -33,7 +27,7 @@ int leerEntero() {
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Descarta la entrada inválida
             cout << "Entrada inválida. Por favor, ingrese un número entero: ";
         } else {
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Descarta lo que siga después del número
             return valor;
         }
     }
@@ -59,7 +53,6 @@ void heapify(int* arr, int n, int i, bool ascendente) {
     int extremo = i;
     int izquierda = 2 * i + 1;
     int derecha = 2 * i + 2;
-
     if (ascendente) {
         if (izquierda < n && arr[izquierda] > arr[extremo]) extremo = izquierda;
         if (derecha < n && arr[derecha] > arr[extremo]) extremo = derecha;
@@ -67,7 +60,6 @@ void heapify(int* arr, int n, int i, bool ascendente) {
         if (izquierda < n && arr[izquierda] < arr[extremo]) extremo = izquierda;
         if (derecha < n && arr[derecha] < arr[extremo]) extremo = derecha;
     }
-
     if (extremo != i) {
         swap(arr[i], arr[extremo]);
         heapify(arr, n, extremo, ascendente);
@@ -97,10 +89,8 @@ void introsortUtil(int* arr, int izquierda, int derecha, int profundidadMax, boo
         heapSort(arr + izquierda, n, ascendente);
         return;
     }
-
     int pivote = arr[izquierda + (derecha - izquierda) / 2];
     int i = izquierda, j = derecha;
-
     while (i <= j) {
         if (ascendente) {
             while (arr[i] < pivote) i++;
@@ -115,9 +105,10 @@ void introsortUtil(int* arr, int izquierda, int derecha, int profundidadMax, boo
             j--;
         }
     }
-
-    if (izquierda < j) introsortUtil(arr, izquierda, j, profundidadMax - 1, ascendente);
-    if (i < derecha) introsortUtil(arr, i, derecha, profundidadMax - 1, ascendente);
+    if (izquierda < j)
+        introsortUtil(arr, izquierda, j, profundidadMax - 1, ascendente);
+    if (i < derecha)
+        introsortUtil(arr, i, derecha, profundidadMax - 1, ascendente);
 }
 
 void introsort(int* arr, int n, bool ascendente) {
@@ -139,29 +130,23 @@ void leerArchivo() {
     getline(cin, nombre);
     nombre += ".txt";
     ifstream archivo(nombre);
-
     if (!archivo.is_open()) {
         cout << "No se pudo abrir el archivo\n";
         return;
     }
-
     int valor;
     tam = 0;
     while (archivo >> valor) tam++;
-
     if (tam == 0) {
         cout << "El archivo está vacío\n";
         archivo.close();
         return;
     }
-
-    archivo.clear(); 
-    archivo.seekg(0);
+    archivo.clear(); archivo.seekg(0);
     delete[] arreglo;
     arreglo = new int[tam];
     for (int i = 0; i < tam; i++) archivo >> arreglo[i];
     archivo.close();
-
     archivoLeido = true;
     archivoOrdenado = false;
     archivoGrabado = false;
@@ -173,9 +158,8 @@ void mostrarArreglo() {
         cout << "Primero debe leer un archivo\n";
         return;
     }
-    cout << "Cuantos elementos quiere mostrar: ";
+    cout << "Cuantos elementos quiere mostrar \n";
     int elementos = leerEntero();
-    if (elementos > tam) elementos = tam;
     cout << "Contenido del arreglo: ";
     for (int i = 0; i < elementos; i++) cout << arreglo[i] << " ";
     cout << endl;
@@ -188,22 +172,20 @@ void ordenarIntrosort() {
     }
     cout << "Seleccione el orden:\n1. Ascendente\n2. Descendente\nOpción: ";
     int opcion = leerEntero();
-    if (opcion <= 0 || opcion > 2) {
+    if(opcion <= 0 || opcion > 2){
         cout << "Opción invalida\n";
         return;
     }
-    if (opcionsal == opcion && archivoOrdenado) {
+    if (opcionsal == opcion && archivoOrdenado){
         cout << "El arreglo ya ha sido ordenado, en el mismo orden\n";
         return;
     }
-
     opcionsal = opcion;
     bool asc = (opcion == 1);
     auto inicio = chrono::high_resolution_clock::now();
     introsort(arreglo, tam, asc);
     auto fin = chrono::high_resolution_clock::now();
     auto duracion = chrono::duration_cast<chrono::milliseconds>(fin - inicio);
-
     archivoOrdenado = true;
     cout << "Tiempo de ejecución: " << duracion.count() << " milisegundos\n";
     cout << "Ordenamiento completado exitosamente\n";
@@ -220,12 +202,10 @@ void guardarArchivo() {
     getline(cin, nombre);
     nombre += ".txt";
     ofstream archivo(nombre);
-
     if (!archivo.is_open()) {
         cout << "No se pudo crear el archivo\n";
         return;
     }
-
     for (int i = 0; i < tam; i++) archivo << arreglo[i] << " ";
     archivo.close();
     archivoGrabado = true;
@@ -233,8 +213,11 @@ void guardarArchivo() {
 }
 
 bool salir() {
-    if (!archivoLeido) return true; 
-    if (!archivoGrabado) {
+    if (!archivoLeido) {
+        cout << "Debe leer un archivo antes de salir\n";
+        return false;
+    }
+    if (!archivoGrabado){
         cout << "Debe grabar un archivo antes de salir\n";
         return false;
     }
@@ -247,7 +230,6 @@ int main() {
     setlocale(LC_ALL, " ");
     int opcion;
     bool continuar = true;
-
     do {
         cout << "\nMenú:\n";
         cout << "1. Leer archivo\n";
@@ -257,7 +239,6 @@ int main() {
         cout << "5. Salir\n";
         cout << "Seleccione una opción: ";
         opcion = leerEntero();
-
         switch (opcion) {
             case 1: leerArchivo(); break;
             case 2: ordenarIntrosort(); break;
@@ -270,3 +251,4 @@ int main() {
 
     return 0;
 }
+
